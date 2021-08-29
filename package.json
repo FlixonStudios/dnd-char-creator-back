@@ -1,0 +1,27 @@
+{
+  "name": "dnd-char-creator-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlixonStudios/dnd-char-creator-back.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FlixonStudios/dnd-char-creator-back/issues"
+  },
+  "homepage": "https://github.com/FlixonStudios/dnd-char-creator-back#readme",
+  "dependencies": {
+    "aws-sdk": "^2.974.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "uuid": "^8.3.2"
+  }
+}
