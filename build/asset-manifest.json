@@ -1,0 +1,30 @@
+{
+  "files": {
+    "main.css": "/static/css/main.ca5b719e.chunk.css",
+    "main.js": "/static/js/main.e52e87bd.chunk.js",
+    "main.js.map": "/static/js/main.e52e87bd.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.0739e95e.js",
+    "runtime-main.js.map": "/static/js/runtime-main.0739e95e.js.map",
+    "static/css/2.4c97ca4f.chunk.css": "/static/css/2.4c97ca4f.chunk.css",
+    "static/js/2.a6c8a9e5.chunk.js": "/static/js/2.a6c8a9e5.chunk.js",
+    "static/js/2.a6c8a9e5.chunk.js.map": "/static/js/2.a6c8a9e5.chunk.js.map",
+    "static/js/3.934134bc.chunk.js": "/static/js/3.934134bc.chunk.js",
+    "static/js/3.934134bc.chunk.js.map": "/static/js/3.934134bc.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.4c97ca4f.chunk.css.map": "/static/css/2.4c97ca4f.chunk.css.map",
+    "static/css/main.ca5b719e.chunk.css.map": "/static/css/main.ca5b719e.chunk.css.map",
+    "static/js/2.a6c8a9e5.chunk.js.LICENSE.txt": "/static/js/2.a6c8a9e5.chunk.js.LICENSE.txt",
+    "static/media/char_select_bg.cee4b4e6.jpg": "/static/media/char_select_bg.cee4b4e6.jpg",
+    "static/media/dnd-bg.5d55b186.jpg": "/static/media/dnd-bg.5d55b186.jpg",
+    "static/media/dnd-home-img.5a6a0f22.jpg": "/static/media/dnd-home-img.5a6a0f22.jpg",
+    "static/media/female_aumaua_x1_lg - Copy.059ccc92.png": "/static/media/female_aumaua_x1_lg - Copy.059ccc92.png",
+    "static/media/night-sky.6e1f78b9.jpg": "/static/media/night-sky.6e1f78b9.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.0739e95e.js",
+    "static/css/2.4c97ca4f.chunk.css",
+    "static/js/2.a6c8a9e5.chunk.js",
+    "static/css/main.ca5b719e.chunk.css",
+    "static/js/main.e52e87bd.chunk.js"
+  ]
+}
