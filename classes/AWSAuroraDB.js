@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { v4: uuidv4 } = require('uuid');
+const bcrypt = require('bcrypt');
 const RDSDataService = require('aws-sdk/clients/rdsdataservice');
 const { User } = require('./User');
 const DEFAULT_QUERY = 'SELECT 1';
@@ -59,24 +60,41 @@ class AWSAuroraDB{
     async createUser(userData){
         const rdsdataservice = this.instantiateRDSObject();    
         
+
+
+
         let user = new User(userData.username, userData.password);    
     
         if (!user.checkValidity){
             console.log("Invalid User");
             return;
         }
-   
 
         let userId = uuidv4();
-        console.log(user);
-        console.log(userId);
+        
 
-        //(${userTableHeaders.id}, ${userTableHeaders.username}, ${userTableHeaders.password}, ${userTableHeaders.isAdmin})
 
         let query = `INSERT INTO ${this.userTableName}(id, username, password, isAdmin) ` + 
         `VALUES ("${userId}", "${user.username}", "${user.password}", ${user.isAdmin});`;
         
-        console.log(query);
+        
+
+        const params = this.instantiateDefaultParams(query);
+    
+        rdsdataservice.executeStatement(params, (err, data) => {    
+            if (err) {
+                console.log(err, err.stack);          
+            } else {
+                // not refactored as there may be different error handling per method
+                console.log(JSON.stringify(data, null, 2));
+            }                  
+        });
+    }
+
+    async deleteUser(userId){
+        const rdsdataservice = this.instantiateRDSObject();
+
+        let query = `DELETE FROM ${this.userTableName} WHERE id="${userId}";`;
 
         const params = this.instantiateDefaultParams(query);
     
@@ -88,6 +106,7 @@ class AWSAuroraDB{
             }                  
         });
     }
+
     
     instantiateDefaultParams(query = DEFAULT_QUERY){
         return {
@@ -105,6 +124,28 @@ class AWSAuroraDB{
             apiVersion: '2018-08-01',
             region: process.env.REGION
         });
+    }
+
+    async encryptPassword(plainTextPassword){
+        try {
+            const saltRounds = 10;
+
+            let salt = await bcrypt.genSalt(saltRounds);
+            let encryptedPassword = await bcrypt.hash(plainTextPassword, salt)    
+            console.log(encryptedPassword);
+            return encryptedPassword;
+        } catch (error) {
+            console.log(error);
+        };
+    }
+
+    async checkPassword(plainTextPassword, hashedPassword){
+        try {
+            let res = await bcrypt.compare(plainTextPassword, hashedPassword);
+            console.log(`Password match: ${res}`)
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 

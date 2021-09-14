@@ -26,7 +26,19 @@ class Database{
     createUser(userData){
         this.databaseProvider.createUser(userData);
     }
-    
+
+    deleteUser(userId){
+        this.databaseProvider.deleteUser(userId);
+    }
+    // to remove
+    getEncryptedPassword(password){
+        this.databaseProvider.encryptPassword(password);
+    }
+    // to remove
+    checkEncryptedPassword(password, hashedPassword){
+        this.databaseProvider.checkPassword(password, hashedPassword);
+    }
+
 }
 
 

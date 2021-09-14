@@ -20,8 +20,10 @@
   "homepage": "https://github.com/FlixonStudios/dnd-char-creator-back#readme",
   "dependencies": {
     "aws-sdk": "^2.974.0",
+    "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "uuid": "^8.3.2"
   }
 }

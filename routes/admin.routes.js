@@ -3,6 +3,10 @@ const {Database} = require('../classes/Database')
 
 let db = new Database();
 
+let res = db.getEncryptedPassword("admin");
+
+console.log(res);
+
 router.get('/test', async(req, res) => {
     try {
         console.log("route entered");
@@ -51,6 +55,18 @@ router.post('/create/user',async(req, res) => {
         await db.createUser(userData);
         
         res.status(200).json({message: 'User created successfully.'});
+    } catch (e) {
+        res.status(400).json({message: e})
+    }
+})
+
+router.delete('/delete/user/:id', async (req, res) => {
+    try {
+        let id = req.params.id;
+
+        await db.deleteUser(id);
+
+        res.status(200).json({message: 'User deleted successfully.'});
     } catch (e) {
         res.status(400).json({message: e})
     }
