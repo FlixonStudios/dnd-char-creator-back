@@ -24,20 +24,25 @@ class Database{
     }
 
     createUser(userData){
-        this.databaseProvider.createUser(userData);
+        return this.databaseProvider.createUser(userData);
     }
 
     deleteUser(userId){
         this.databaseProvider.deleteUser(userId);
     }
-    // to remove
-    getEncryptedPassword(password){
-        this.databaseProvider.encryptPassword(password);
+
+    findOneInTable(tableName, columnName, value){
+        return this.databaseProvider.findOneInTable(tableName, columnName, value);
     }
-    // to remove
-    checkEncryptedPassword(password, hashedPassword){
-        this.databaseProvider.checkPassword(password, hashedPassword);
-    }
+
+    // // to remove
+    // async getEncryptedPassword(password){
+    //     return await this.databaseProvider.encryptPassword(password);
+    // }
+    // // to remove
+    // async checkEncryptedPassword(password, hashedPassword){
+    //     return await this.databaseProvider.checkPassword(password, hashedPassword);
+    // }
 
 }
 
