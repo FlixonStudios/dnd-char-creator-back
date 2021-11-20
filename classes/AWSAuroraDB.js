@@ -17,6 +17,8 @@ class AWSAuroraDB{
         
         const params = this.instantiateDefaultParams(DEFAULT_QUERY);
         
+        params['continueAfterTimeout'] = true;
+
         this.rdsdataservice.executeStatement(params, function(err, data) {
             if (err) {
                 console.log(err, err.stack);
@@ -66,7 +68,7 @@ class AWSAuroraDB{
 
         let userId = uuidv4();
 
-        let query = `INSERT INTO IF NOT EXISTS ${this.userTableName}(id, username, password, isAdmin) ` + 
+        let query = `INSERT IGNORE INTO ${this.userTableName}(id, username, password, isAdmin) ` + 
         `VALUES ("${userId}", "${user.username}", "${user.password}", ${user.isAdmin});`;
                
         const params = this.instantiateDefaultParams(query);
@@ -75,11 +77,9 @@ class AWSAuroraDB{
             this.rdsdataservice.executeStatement(params, (err, data) => {    
                 if (err) {
                     console.log(err, err.stack);
-                    //throw err.stack;
                 } else {
                     // not refactored as there may be different error handling per method
                     console.log(JSON.stringify(data, null, 2));
-                    //return JSON.stringify(data, null, 2);
                 }                  
             });    
         } catch (error) {
@@ -106,15 +106,30 @@ class AWSAuroraDB{
     }
 
     async findOneInTable(tableName, columnName, value){
+        // find one should return 1 or 0 record at most
         let query = `SELECT * FROM ${tableName} WHERE ${columnName} LIKE "${value}";`;
         const params = this.instantiateDefaultParams(query);
-        this.rdsdataservice.executeStatement(params, (err, data) => {    
+        
+        params['includeResultMetadata'] = false;
+
+        // let result = null;
+        console.log('rds start')
+        await this.rdsdataservice.executeStatement(params, (err, data) => {                
             if (err) {
-                console.log(err, err.stack);          
-            } else {
-                console.log(JSON.stringify(data, null, 2));
+                // console.log(err, err.stack);        
+                result = null;
+            } else {                
+                let { records } = data;
+                result = records;
+                console.log(records);
             }                  
         });
+        console.log('data', data);
+        let res = await req.send() 
+        console.log('res', res)
+        console.log(res.data)
+        console.log('rds end')
+        return data;
     }
 
     

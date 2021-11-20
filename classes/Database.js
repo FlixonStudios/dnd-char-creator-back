@@ -11,28 +11,29 @@ class Database{
         this.databaseProvider = new AWSAuroraDB();
     }
 
-    testDatabase(){
+    async testDatabase(){
         this.databaseProvider.testDatabase();
     }
 
-    createTable(query){
+    async createTable(query){
         this.databaseProvider.createTable(query);
     }
 
-    deleteTable(tableName){
+    async deleteTable(tableName){
         this.databaseProvider.deleteTable(tableName);
     }
 
-    createUser(userData){
-        return this.databaseProvider.createUser(userData);
+    async createUser(userData){
+        return await this.databaseProvider.createUser(userData);
     }
 
-    deleteUser(userId){
+    async deleteUser(userId){
         this.databaseProvider.deleteUser(userId);
     }
 
-    findOneInTable(tableName, columnName, value){
-        return this.databaseProvider.findOneInTable(tableName, columnName, value);
+    async findOneInTable(tableName, columnName, value){
+        // this method should return 1 record or null in the case of not found/error
+        return await this.databaseProvider.findOneInTable(tableName, columnName, value);
     }
 
     // // to remove
