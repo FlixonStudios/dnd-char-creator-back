@@ -8,16 +8,18 @@ const DEFAULT_QUERY = 'SELECT 1';
 class AWSAuroraDB{
     
     constructor(){
-        this.databaseName = 'dndcharcreatordb';
-        this.userTableName = 'users';        
+        this.databaseName = 'FlixonStudiosDB';
+        this.userTableName = 'users';
+        this.rdsdataservice = this.instantiateRDSObject();       
     }
 
     async testDatabase(){
-        const rdsdataservice = this.instantiateRDSObject();
-    
+        
         const params = this.instantiateDefaultParams(DEFAULT_QUERY);
         
-        rdsdataservice.executeStatement(params, function(err, data) {
+        params['continueAfterTimeout'] = true;
+
+        this.rdsdataservice.executeStatement(params, function(err, data) {
             if (err) {
                 console.log(err, err.stack);
             } else {
@@ -27,11 +29,10 @@ class AWSAuroraDB{
     }
     
     async createTable(query){        
-        const rdsdataservice = this.instantiateRDSObject();    
-        
+                
         const params = this.instantiateDefaultParams(query);   
     
-        rdsdataservice.executeStatement(params, (err, data) => {        
+        this.rdsdataservice.executeStatement(params, (err, data) => {        
             if (err) {
                 console.log(err, err.stack);          
             } else {
@@ -42,13 +43,12 @@ class AWSAuroraDB{
     }
     
     async deleteTable(tableName){
-        const rdsdataservice = this.instantiateRDSObject();
-    
+            
         let query = `DROP TABLE IF EXISTS ${tableName}`;
     
         const params = this.instantiateDefaultParams(query);
     
-        rdsdataservice.executeStatement(params, (err, data) => {    
+        this.rdsdataservice.executeStatement(params, (err, data) => {    
             if (err) {
                 console.log(err, err.stack);          
             } else {
@@ -58,11 +58,7 @@ class AWSAuroraDB{
     }
     
     async createUser(userData){
-        const rdsdataservice = this.instantiateRDSObject();    
-        
-
-
-
+                
         let user = new User(userData.username, userData.password);    
     
         if (!user.checkValidity){
@@ -71,40 +67,69 @@ class AWSAuroraDB{
         }
 
         let userId = uuidv4();
-        
 
-
-        let query = `INSERT INTO ${this.userTableName}(id, username, password, isAdmin) ` + 
+        let query = `INSERT IGNORE INTO ${this.userTableName}(id, username, password, isAdmin) ` + 
         `VALUES ("${userId}", "${user.username}", "${user.password}", ${user.isAdmin});`;
+               
+        const params = this.instantiateDefaultParams(query);
         
+        try {
+            this.rdsdataservice.executeStatement(params, (err, data) => {    
+                if (err) {
+                    console.log(err, err.stack);
+                } else {
+                    // not refactored as there may be different error handling per method
+                    console.log(JSON.stringify(data, null, 2));
+                }                  
+            });    
+        } catch (error) {
+            console("catch block entered");
+            return error;
+        }
+
         
+    }
+
+    async deleteUser(userId){
+        
+        let query = `DELETE FROM ${this.userTableName} WHERE id="${userId}";`;
 
         const params = this.instantiateDefaultParams(query);
     
-        rdsdataservice.executeStatement(params, (err, data) => {    
+        this.rdsdataservice.executeStatement(params, (err, data) => {    
             if (err) {
                 console.log(err, err.stack);          
             } else {
-                // not refactored as there may be different error handling per method
                 console.log(JSON.stringify(data, null, 2));
             }                  
         });
     }
 
-    async deleteUser(userId){
-        const rdsdataservice = this.instantiateRDSObject();
-
-        let query = `DELETE FROM ${this.userTableName} WHERE id="${userId}";`;
-
+    async findOneInTable(tableName, columnName, value){
+        // find one should return 1 or 0 record at most
+        let query = `SELECT * FROM ${tableName} WHERE ${columnName} LIKE "${value}";`;
         const params = this.instantiateDefaultParams(query);
-    
-        rdsdataservice.executeStatement(params, (err, data) => {    
+        
+        params['includeResultMetadata'] = false;
+
+        // let result = null;
+        console.log('rds start')
+        await this.rdsdataservice.executeStatement(params, (err, data) => {                
             if (err) {
-                console.log(err, err.stack);          
-            } else {
-                console.log(JSON.stringify(data, null, 2));
+                // console.log(err, err.stack);        
+                result = null;
+            } else {                
+                let { records } = data;
+                result = records;
+                console.log(records);
             }                  
         });
+        console.log('data', data);
+        let res = await req.send() 
+        console.log('res', res)
+        console.log(res.data)
+        console.log('rds end')
+        return data;
     }
 
     
@@ -112,7 +137,7 @@ class AWSAuroraDB{
         return {
             resourceArn: process.env.DATABASE_ARN,
             secretArn: process.env.SECRET_ARN,
-            database: 'dndcharcreatordb',
+            database: this.databaseName,
             sql: query,
         }
     }
@@ -132,17 +157,19 @@ class AWSAuroraDB{
 
             let salt = await bcrypt.genSalt(saltRounds);
             let encryptedPassword = await bcrypt.hash(plainTextPassword, salt)    
-            console.log(encryptedPassword);
+            
             return encryptedPassword;
         } catch (error) {
             console.log(error);
+            return "";
         };
     }
 
-    async checkPassword(plainTextPassword, hashedPassword){
+    async checkPassword(plainTextPassword, hashedPassword = ""){
         try {
+            //console.log(`inputPass: ${plainTextPassword} | hashPass: ${hashedPassword}`)
             let res = await bcrypt.compare(plainTextPassword, hashedPassword);
-            console.log(`Password match: ${res}`)
+            //console.log(`Password match: ${res}`)
         } catch (error) {
             console.log(error);
         }

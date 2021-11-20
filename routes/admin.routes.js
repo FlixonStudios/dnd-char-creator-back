@@ -1,11 +1,7 @@
 const router = require('express').Router();
-const {Database} = require('../classes/Database')
+const { Database } = require('../classes/Database');
 
 let db = new Database();
-
-let res = db.getEncryptedPassword("admin");
-
-console.log(res);
 
 router.get('/test', async(req, res) => {
     try {
@@ -22,8 +18,8 @@ router.post('/create/user-table', async(req, res) => {
     try {
         let query = `CREATE TABLE IF NOT EXISTS 
                         users(
-                            id VARCHAR(36) NOT NULL, 
-                            username VARCHAR(50) NOT NULL, 
+                            id VARCHAR(36) NOT NULL UNIQUE, 
+                            username VARCHAR(50) NOT NULL UNIQUE, 
                             password VARCHAR(50) NOT NULL,
                             isAdmin BOOLEAN,
                             PRIMARY KEY(id));`
@@ -47,14 +43,31 @@ router.post('/delete/:tableName', async(req,res) => {
 
 router.post('/create/user',async(req, res) => {
     try {
+
+        console.log(req.body);
+
         let userData = {
-            "username": "admin",
-            "password": "admin",            
+            "username": req.body.username,
+            "password": req.body.password,            
         }
         
-        await db.createUser(userData);
+        let result = await db.createUser(userData);
         
-        res.status(200).json({message: 'User created successfully.'});
+        res.status(200).json({result});
+    } catch (e) {
+        res.status(400).json({result});
+    }
+})
+
+router.get('/find/:group/:name/:value', async(req, res) => {
+    try {
+        console.log(req.params);
+        let { group, name, value } = req.params;
+
+        let result = await db.findOneInTable(group, name, value);
+        // if result.record = 0, means record does not exist in table.
+        console.log(result);
+        res.status(200).json({message: 'found'})
     } catch (e) {
         res.status(400).json({message: e})
     }

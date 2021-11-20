@@ -11,33 +11,39 @@ class Database{
         this.databaseProvider = new AWSAuroraDB();
     }
 
-    testDatabase(){
+    async testDatabase(){
         this.databaseProvider.testDatabase();
     }
 
-    createTable(query){
+    async createTable(query){
         this.databaseProvider.createTable(query);
     }
 
-    deleteTable(tableName){
+    async deleteTable(tableName){
         this.databaseProvider.deleteTable(tableName);
     }
 
-    createUser(userData){
-        this.databaseProvider.createUser(userData);
+    async createUser(userData){
+        return await this.databaseProvider.createUser(userData);
     }
 
-    deleteUser(userId){
+    async deleteUser(userId){
         this.databaseProvider.deleteUser(userId);
     }
-    // to remove
-    getEncryptedPassword(password){
-        this.databaseProvider.encryptPassword(password);
+
+    async findOneInTable(tableName, columnName, value){
+        // this method should return 1 record or null in the case of not found/error
+        return await this.databaseProvider.findOneInTable(tableName, columnName, value);
     }
-    // to remove
-    checkEncryptedPassword(password, hashedPassword){
-        this.databaseProvider.checkPassword(password, hashedPassword);
-    }
+
+    // // to remove
+    // async getEncryptedPassword(password){
+    //     return await this.databaseProvider.encryptPassword(password);
+    // }
+    // // to remove
+    // async checkEncryptedPassword(password, hashedPassword){
+    //     return await this.databaseProvider.checkPassword(password, hashedPassword);
+    // }
 
 }
 
