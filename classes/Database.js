@@ -28,7 +28,7 @@ class Database{
     }
 
     async deleteUser(userId){
-        this.databaseProvider.deleteUser(userId);
+        await this.databaseProvider.deleteUser(userId);
     }
 
     async findOneInTable(tableName, columnName, value){

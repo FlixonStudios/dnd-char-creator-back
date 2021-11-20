@@ -110,26 +110,15 @@ class AWSAuroraDB{
         let query = `SELECT * FROM ${tableName} WHERE ${columnName} LIKE "${value}";`;
         const params = this.instantiateDefaultParams(query);
         
-        params['includeResultMetadata'] = false;
-
-        // let result = null;
-        console.log('rds start')
-        await this.rdsdataservice.executeStatement(params, (err, data) => {                
-            if (err) {
-                // console.log(err, err.stack);        
-                result = null;
-            } else {                
-                let { records } = data;
-                result = records;
-                console.log(records);
-            }                  
-        });
-        console.log('data', data);
-        let res = await req.send() 
-        console.log('res', res)
-        console.log(res.data)
-        console.log('rds end')
-        return data;
+        try {
+            
+            let { records } = await this.rdsdataservice.executeStatement(params).promise();
+            
+            return records;
+        } catch (error) {
+            console.log(error);
+            return null;
+        };
     }
 
     
